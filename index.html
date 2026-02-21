@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GRH ARCADE CABINET</title>
+<title>GRH</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -56,13 +56,13 @@ body{
 </style>
 </head>
 
-<body class="flex items-center justify-center min-h-screen p-4">
+<body class="flex flex-col items-center justify-center min-h-screen p-4">
 
 <div class="w-[500px] max-w-full">
 
   <!-- MARQUEE -->
   <div class="bg-zinc-800 border-4 border-zinc-900 p-6 text-center shadow-inner">
-    <h1 class="text-lg text-white tracking-widest">GRH ARCADE</h1>
+    <h1 class="text-lg text-white tracking-widest">ARCADE</h1>
   </div>
 
   <!-- SCREEN -->
@@ -70,12 +70,12 @@ body{
     <div id="screen" class="screen flicker relative bg-black border-4 border-zinc-900 h-[420px] p-6 text-green-400 text-xs overflow-hidden transition-opacity duration-500">
 
       <div class="flex justify-between text-[8px] mb-2 text-green-600">
-        <span>PLAYER: GRH</span>
-        <span>HIGH SCORE: 999999</span>
+        <span>PLAYER: You </span>
+        <span>HIGH SCORE: -1000</span>
       </div>
 
       <div class="flex justify-between text-[8px] mb-6 text-green-600">
-        <span>CREDIT 01</span>
+        <span>CREDIT 02</span>
         <span>FREE PLAY</span>
       </div>
 
@@ -123,7 +123,6 @@ body{
   <!-- CONTROL PANEL -->
   <div class="bg-zinc-800 border-4 border-zinc-900 p-6 flex justify-between items-center mt-2">
 
-    <!-- Stick -->
     <div class="flex flex-col items-center gap-2">
       <span class="text-[8px] text-zinc-400">UP</span>
       <button id="btn-up" class="w-10 h-10 bg-zinc-700 border-4 border-zinc-900 transition"></button>
@@ -131,7 +130,6 @@ body{
       <button id="btn-down" class="w-10 h-10 bg-zinc-700 border-4 border-zinc-900 transition"></button>
     </div>
 
-    <!-- Action button -->
     <div class="flex flex-col items-center">
       <span class="text-[8px] text-zinc-400 mb-2">A / SELECT</span>
       <button id="btn-select" class="w-14 h-14 bg-zinc-700 rounded-full border-4 border-zinc-900 transition"></button>
@@ -141,12 +139,18 @@ body{
 
 </div>
 
+<!-- MACHINE PLATE FOOTER -->
+<div class="mt-6">
+  <div class="bg-zinc-700 border-2 border-zinc-900 px-6 py-3 text-[7px] text-zinc-300 tracking-widest shadow-inner text-center">
+    © 2026 GRH INDUSTRIES • ARCADE SYSTEM
+  </div>
+</div>
+
 <!-- SOUND -->
 <audio id="move-sound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" preload="auto"></audio>
 <audio id="select-sound" src="https://assets.mixkit.co/active_storage/sfx/2570/2570-preview.mp3" preload="auto"></audio>
 
 <script>
-
 let current = 0
 let currentMenu = "main"
 let idleTimer
@@ -263,21 +267,18 @@ function selectItem(){
   resetIdle()
 }
 
-/* Keyboard */
 document.addEventListener("keydown",(e)=>{
   if(e.key==="ArrowDown") moveDown()
   if(e.key==="ArrowUp") moveUp()
   if(e.key==="Enter") selectItem()
 })
 
-/* Mobile buttons */
 document.getElementById("btn-up").addEventListener("click", moveUp)
 document.getElementById("btn-down").addEventListener("click", moveDown)
 document.getElementById("btn-select").addEventListener("click", selectItem)
 
 resetIdle()
 update()
-
 </script>
 
 </body>
