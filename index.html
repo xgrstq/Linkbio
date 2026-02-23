@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GRH GameBoy</title>
+<title>GRH</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -16,6 +16,7 @@ body{
 
 /* ===== GAMEBOY BODY ===== */
 .gameboy{
+  position:relative;
   background:linear-gradient(145deg,#d9d9c8,#c8c8b5);
   box-shadow:
     inset -4px -4px 8px rgba(0,0,0,0.2),
@@ -25,35 +26,43 @@ body{
 
 /* ===== SCREEN ===== */
 .screen-shell{
-  background:#9bbc0f;
-  box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
+  background:#8bac0f;
+  padding:20px;
+  border-radius:6px;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
 }
 
-.win98{
-  background:#c0c0c0;
-  border:2px solid #fff;
-  border-right-color:#404040;
-  border-bottom-color:#404040;
+.screen-text{
+  color:#0f380f;
+  font-size:12px;
+  line-height:1.8;
+  height:200px;
+  overflow-y:auto;
 }
 
-.titlebar{
-  background:#000080;
-  color:white;
-  padding:4px;
-  font-size:10px;
+.screen-text::-webkit-scrollbar{
+  width:4px;
+}
+.screen-text::-webkit-scrollbar-thumb{
+  background:#0f380f;
 }
 
-.window-body{
-  padding:10px;
-  font-size:10px;
+/* ===== LOADING ANIMATION ===== */
+@keyframes blink{
+  0%,100%{opacity:1}
+  50%{opacity:0}
+}
+.loading{
+  animation:blink 1s infinite;
 }
 
-.arcade-item{
+/* ===== MENU ===== */
+.menu-item{
   position:relative;
   padding-left:14px;
 }
 
-.arcade-item.selected::before{
+.menu-item.selected::before{
   content:">";
   position:absolute;
   left:0;
@@ -61,89 +70,129 @@ body{
 
 /* ===== D-PAD ===== */
 .dpad button{
-  background:#4b4b4b;
-  box-shadow: inset -2px -2px 4px rgba(0,0,0,0.6),
-              inset 2px 2px 4px rgba(255,255,255,0.2);
+  background:#3a3a3a;
+  box-shadow: inset -3px -3px 6px rgba(0,0,0,0.7),
+              inset 3px 3px 6px rgba(255,255,255,0.2);
 }
-
 .dpad button:active{
   transform:translateY(2px);
 }
 
-/* ===== ACTION BUTTONS ===== */
+/* ===== A B BUTTON ===== */
 .btn-round{
-  box-shadow: inset -3px -3px 6px rgba(0,0,0,0.5),
-              inset 3px 3px 6px rgba(255,255,255,0.2);
+  width:60px;
+  height:60px;
+  border-radius:9999px;
+  color:white;
+  font-size:16px;
+  box-shadow:
+    inset -4px -4px 6px rgba(0,0,0,0.6),
+    inset 4px 4px 6px rgba(255,255,255,0.2),
+    0 6px 10px rgba(0,0,0,0.5);
 }
 .btn-round:active{
+  transform:translateY(3px);
+}
+
+/* ===== SMALL BUTTON ===== */
+.small-btn{
+  background:#777;
+  padding:6px 18px;
+  font-size:8px;
+  border-radius:20px;
+  box-shadow: inset -2px -2px 4px rgba(0,0,0,0.6),
+              inset 2px 2px 4px rgba(255,255,255,0.2);
+}
+.small-btn:active{
   transform:translateY(2px);
 }
 
-/* ===== LEGEND ===== */
-.legend{
-  font-size:8px;
-  color:#444;
-  margin-top:10px;
+/* ===== LED ===== */
+.led{
+  width:10px;
+  height:10px;
+  background:red;
+  border-radius:9999px;
+  box-shadow:0 0 8px red;
+}
+
+/* ===== SPEAKER ===== */
+.speaker-line{
+  height:4px;
+  background:#777;
+  margin:4px 0;
+  border-radius:4px;
 }
 </style>
 </head>
 
 <body class="flex items-center justify-center min-h-screen p-4">
 
-<div class="gameboy w-[420px] rounded-2xl p-6">
+<div class="gameboy w-[360px] rounded-2xl p-6">
 
+ 
   <!-- SCREEN -->
-  <div class="screen-shell p-4 rounded-md mb-6">
-    <div id="screen" class="win98">
-
-      <div class="titlebar flex justify-between items-center">
-        <span id="virtual-back" class="cursor-pointer">← BACK</span>
-        <span id="window-title">My Computer</span>
-        <span>■</span>
-      </div>
-
-      <div class="window-body" id="window-content"></div>
-
-    </div>
+  <div class="screen-shell mb-6">
+    <div class="screen-text" id="screen"></div>
   </div>
 
-  <!-- CONTROLS -->
-  <div class="flex justify-between items-center">
+<!-- LED + CREDIT -->
+<div class="flex items-center mb-4">
+  
+  <!-- KIRI: LED + POWER -->
+  <div class="flex items-center gap-2">
+    <div class="led"></div>
+    <span class="text-xs text-gray-700">POWER</span>
+  </div>
 
-    <!-- D-PAD -->
+  <!-- KANAN: CREDIT -->
+  <div class="ml-auto text-[8px] text-gray-600 tracking-widest">
+    © GRH 2026
+  </div>
+
+</div>  
+
+  <!-- CONTROLS -->
+  <div class="flex justify-between items-start">
+
     <div class="dpad grid grid-cols-3 gap-1 w-28">
       <div></div>
       <button id="btn-up" class="h-10"></button>
       <div></div>
 
-      <button id="btn-left" class="h-10"></button>
-      <div class="bg-[#3a3a3a]"></div>
-      <button id="btn-right" class="h-10"></button>
+      <button class="h-10"></button>
+      <div class="bg-[#2e2e2e]"></div>
+      <button class="h-10"></button>
 
       <div></div>
       <button id="btn-down" class="h-10"></button>
       <div></div>
     </div>
 
-    <!-- ACTION BUTTONS -->
-    <div class="grid grid-cols-2 gap-4 text-xs">
-      <button class="btn-round bg-purple-500 w-12 h-12 rounded-full text-white">Y</button>
-      <button class="btn-round bg-blue-500 w-12 h-12 rounded-full text-white">X</button>
-      <button class="btn-round bg-yellow-500 w-12 h-12 rounded-full text-black">B</button>
-      <button id="btn-a" class="btn-round bg-red-600 w-12 h-12 rounded-full text-white">A</button>
+    <div class="relative w-40 h-32">
+      <button id="btn-b"
+        class="btn-round bg-purple-700 absolute bottom-10 left-6">
+        B
+      </button>
+
+      <button id="btn-a"
+        class="btn-round bg-purple-700 absolute bottom-0 right-6">
+        A
+      </button>
     </div>
 
   </div>
 
-  <!-- HOME & BACK -->
   <div class="flex justify-center gap-10 mt-6">
-    <button id="btn-home" class="bg-gray-600 px-6 py-2 text-xs rounded shadow-inner">HOME</button>
-    <button id="btn-back" class="bg-gray-600 px-6 py-2 text-xs rounded shadow-inner">BACK</button>
+    <button id="btn-select" class="small-btn">BACK</button>
+    <button id="btn-start" class="small-btn">HOME</button>
   </div>
 
-  <!-- LEGEND -->
-  <div class="legend text-center">
-    PHYSICAL: D-PAD = NAV • A = SELECT • HOME = DASHBOARD • BACK = PREVIOUS
+  <div class="mt-8">
+    <div class="speaker-line w-24 ml-auto"></div>
+    <div class="speaker-line w-20 ml-auto"></div>
+    <div class="speaker-line w-16 ml-auto"></div>
+    <div class="speaker-line w-12 ml-auto"></div>
   </div>
 
 </div>
@@ -151,6 +200,7 @@ body{
 <script>
 let current = 0
 let currentMenu = "main"
+let isLoading = false
 
 const links = {
   main: [
@@ -162,56 +212,83 @@ const links = {
   ],
   preset: [
     "https://drive.google.com/file/d/1Bs4M2H9lXtxrvRAWqawEz2U4akMIxt2h/view?usp=drivesdk",
-    "https://drive.google.com/file/d/16ZZfGMMsoUrbT-xIWneySB3Jkom1Q8gk/view?usp=drivesdk",
+    "https://drive.google.com/file/d/16ZZfGMMsoUrbT-xIWneySB3Jkom1Q8gk/view?usp=drivesdk"
   ]
 }
 
 function render(){
-  const content = document.getElementById("window-content")
-  const title = document.getElementById("window-title")
+  if(isLoading) return
 
-  let items = []
+  const screen = document.getElementById("screen")
+  let content = ""
 
-  if(currentMenu === "main"){
-    title.textContent = "My Computer"
-    items = ["LIGHTROOM PRESET","500PX","SAWERIA","GITHUB","DISCORD"]
+  if(currentMenu==="main"){
+    const items=["LIGHTROOM PRESET","500PX","SAWERIA","GITHUB","DISCORD"]
+
+    content += "GRH v3.0<br><br>"
+    content += items.map((item,i)=>
+      `<div class="menu-item ${i===current?'selected':''}">${item}</div>`
+    ).join("")
+    content += "<br>A=SELECT"
   }
 
-  if(currentMenu === "preset"){
-    title.textContent = "Lightroom Preset"
-    items = ["SUMMER GROWTH","WARM GROWTH"]
+  if(currentMenu==="preset"){
+    content += "LIGHTROOM PRESET<br><br>"
+
+    if(current===0){
+      content += `
+      <div class="menu-item selected">SUMMER GROWTH</div>
+      ORGANIC • WARM • VIBRANT<br><br>
+      DOWNLOAD
+      `
+    }
+
+    if(current===1){
+      content += `
+      <div class="menu-item selected">WARM GROWTH</div>
+      ORGANIC • WARM DAYLIGHT • PEACEFUL<br><br>
+      DOWNLOAD
+      `
+    }
   }
 
-  content.innerHTML = items.map((item,i)=>
-    `<div class="arcade-item ${i===current?'selected':''}">${item}</div>`
-  ).join("")
+  screen.innerHTML = content
+}
+
+function showLoading(callback){
+  const screen = document.getElementById("screen")
+  isLoading = true
+  screen.innerHTML = `<div class="loading">PLEASE WAIT<br>LOADING DATA.....</div>`
+  setTimeout(()=>{
+    isLoading = false
+    callback()
+  },1000)
 }
 
 function moveUp(){
   const max = currentMenu==="main"?5:2
-  current = (current-1+max)%max
+  current=(current-1+max)%max
   render()
 }
 
 function moveDown(){
   const max = currentMenu==="main"?5:2
-  current = (current+1)%max
+  current=(current+1)%max
   render()
 }
-
-function moveLeft(){}
-function moveRight(){}
 
 function selectItem(){
   if(currentMenu==="main"){
     if(current===0){
-      currentMenu="preset"
-      current=0
-      render()
+      showLoading(()=>{
+        currentMenu="preset"
+        current=0
+        render()
+      })
       return
     }
     window.open(links.main[current],"_blank")
-  } else {
+  }else{
     window.open(links.preset[current],"_blank")
   }
 }
@@ -236,12 +313,11 @@ document.addEventListener("keydown",(e)=>{
   if(e.key==="Enter") selectItem()
 })
 
-document.getElementById("btn-up").onclick = moveUp
-document.getElementById("btn-down").onclick = moveDown
-document.getElementById("btn-a").onclick = selectItem
-document.getElementById("btn-home").onclick = goHome
-document.getElementById("btn-back").onclick = goBack
-document.getElementById("virtual-back").onclick = goBack
+document.getElementById("btn-up").onclick=moveUp
+document.getElementById("btn-down").onclick=moveDown
+document.getElementById("btn-a").onclick=selectItem
+document.getElementById("btn-select").onclick=goBack
+document.getElementById("btn-start").onclick=goHome
 
 render()
 </script>
