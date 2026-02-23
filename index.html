@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GRH</title>
+<title>GRH GameBoy</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -11,41 +11,46 @@
 <style>
 body{
   font-family:'Press Start 2P', cursive;
-  background:#1a1a1a;
+  background:#2f2f2f;
 }
 
-/* CRT subtle */
-.screen::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:repeating-linear-gradient(
-    to bottom,
-    rgba(0,0,0,0.15) 0px,
-    rgba(0,0,0,0.15) 2px,
-    transparent 3px,
-    transparent 6px
-  );
-  pointer-events:none;
+/* ===== GAMEBOY BODY ===== */
+.gameboy{
+  background:linear-gradient(145deg,#d9d9c8,#c8c8b5);
+  box-shadow:
+    inset -4px -4px 8px rgba(0,0,0,0.2),
+    inset 4px 4px 8px rgba(255,255,255,0.4),
+    0 10px 30px rgba(0,0,0,0.6);
 }
 
-@keyframes flicker{
-  0%,100%{opacity:1}
-  50%{opacity:.985}
-}
-.flicker{
-  animation:flicker .2s infinite;
+/* ===== SCREEN ===== */
+.screen-shell{
+  background:#9bbc0f;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
 }
 
-.dimmed{
-  opacity:0.4;
-  transition:opacity .5s;
+.win98{
+  background:#c0c0c0;
+  border:2px solid #fff;
+  border-right-color:#404040;
+  border-bottom-color:#404040;
 }
 
-/* Cursor arrow */
+.titlebar{
+  background:#000080;
+  color:white;
+  padding:4px;
+  font-size:10px;
+}
+
+.window-body{
+  padding:10px;
+  font-size:10px;
+}
+
 .arcade-item{
   position:relative;
-  padding-left:20px;
+  padding-left:14px;
 }
 
 .arcade-item.selected::before{
@@ -53,111 +58,99 @@ body{
   position:absolute;
   left:0;
 }
+
+/* ===== D-PAD ===== */
+.dpad button{
+  background:#4b4b4b;
+  box-shadow: inset -2px -2px 4px rgba(0,0,0,0.6),
+              inset 2px 2px 4px rgba(255,255,255,0.2);
+}
+
+.dpad button:active{
+  transform:translateY(2px);
+}
+
+/* ===== ACTION BUTTONS ===== */
+.btn-round{
+  box-shadow: inset -3px -3px 6px rgba(0,0,0,0.5),
+              inset 3px 3px 6px rgba(255,255,255,0.2);
+}
+.btn-round:active{
+  transform:translateY(2px);
+}
+
+/* ===== LEGEND ===== */
+.legend{
+  font-size:8px;
+  color:#444;
+  margin-top:10px;
+}
 </style>
 </head>
 
-<body class="flex flex-col items-center justify-center min-h-screen p-4">
+<body class="flex items-center justify-center min-h-screen p-4">
 
-<div class="w-[500px] max-w-full">
-
-  <!-- MARQUEE -->
-  <div class="bg-zinc-800 border-4 border-zinc-900 p-6 text-center shadow-inner">
-    <h1 class="text-lg text-white tracking-widest">ARCADE</h1>
-  </div>
+<div class="gameboy w-[420px] rounded-2xl p-6">
 
   <!-- SCREEN -->
-  <div class="bg-zinc-700 border-x-8 border-zinc-900 p-6">
-    <div id="screen" class="screen flicker relative bg-black border-4 border-zinc-900 h-[420px] p-6 text-green-400 text-xs overflow-hidden transition-opacity duration-500">
+  <div class="screen-shell p-4 rounded-md mb-6">
+    <div id="screen" class="win98">
 
-      <div class="flex justify-between text-[8px] mb-2 text-green-600">
-        <span>PLAYER: You </span>
-        <span>HIGH SCORE: -1000</span>
+      <div class="titlebar flex justify-between items-center">
+        <span id="virtual-back" class="cursor-pointer">← BACK</span>
+        <span id="window-title">My Computer</span>
+        <span>■</span>
       </div>
 
-      <div class="flex justify-between text-[8px] mb-6 text-green-600">
-        <span>CREDIT 02</span>
-        <span>FREE PLAY</span>
-      </div>
-
-      <!-- LOADING -->
-      <div id="loading" class="hidden text-center mt-20">
-        LOADING DATA...
-      </div>
-
-      <!-- MAIN MENU -->
-      <div id="main-menu" class="space-y-5">
-        <div class="arcade-item">LIGHTROOM PRESET</div>
-        <div class="arcade-item">500PX</div>
-        <div class="arcade-item">SAWERIA</div>
-        <div class="arcade-item">GITHUB</div>
-        <div class="arcade-item">DISCORD</div>
-      </div>
-
-      <!-- PRESET PAGE -->
-      <div id="preset-page" class="hidden space-y-7">
-
-        <div>
-          <div class="arcade-item">SUMMER GROWTH</div>
-          <div class="text-[8px] text-green-600 mt-1">
-            ORGANIC • WARM • VIBRANT
-          </div>
-        </div>
-
-        <div>
-          <div class="arcade-item">WARM GROWTH</div>
-          <div class="text-[8px] text-green-600 mt-1">
-            ORGANIC • WARM DAYLIGHT • PEACEFUL
-          </div>
-        </div>
-
-        <div class="arcade-item">BACK</div>
-      </div>
-
-      <div class="absolute bottom-2 left-0 right-0 text-center text-[8px] text-green-700">
-        ↑ ↓ MOVE • ENTER / A SELECT
-      </div>
+      <div class="window-body" id="window-content"></div>
 
     </div>
   </div>
 
-  <!-- CONTROL PANEL -->
-  <div class="bg-zinc-800 border-4 border-zinc-900 p-6 flex justify-between items-center mt-2">
+  <!-- CONTROLS -->
+  <div class="flex justify-between items-center">
 
-    <div class="flex flex-col items-center gap-2">
-      <span class="text-[8px] text-zinc-400">UP</span>
-      <button id="btn-up" class="w-10 h-10 bg-zinc-700 border-4 border-zinc-900 transition"></button>
-      <span class="text-[8px] text-zinc-400">DOWN</span>
-      <button id="btn-down" class="w-10 h-10 bg-zinc-700 border-4 border-zinc-900 transition"></button>
+    <!-- D-PAD -->
+    <div class="dpad grid grid-cols-3 gap-1 w-28">
+      <div></div>
+      <button id="btn-up" class="h-10"></button>
+      <div></div>
+
+      <button id="btn-left" class="h-10"></button>
+      <div class="bg-[#3a3a3a]"></div>
+      <button id="btn-right" class="h-10"></button>
+
+      <div></div>
+      <button id="btn-down" class="h-10"></button>
+      <div></div>
     </div>
 
-    <div class="flex flex-col items-center">
-      <span class="text-[8px] text-zinc-400 mb-2">A / SELECT</span>
-      <button id="btn-select" class="w-14 h-14 bg-zinc-700 rounded-full border-4 border-zinc-900 transition"></button>
+    <!-- ACTION BUTTONS -->
+    <div class="grid grid-cols-2 gap-4 text-xs">
+      <button class="btn-round bg-purple-500 w-12 h-12 rounded-full text-white">Y</button>
+      <button class="btn-round bg-blue-500 w-12 h-12 rounded-full text-white">X</button>
+      <button class="btn-round bg-yellow-500 w-12 h-12 rounded-full text-black">B</button>
+      <button id="btn-a" class="btn-round bg-red-600 w-12 h-12 rounded-full text-white">A</button>
     </div>
 
+  </div>
+
+  <!-- HOME & BACK -->
+  <div class="flex justify-center gap-10 mt-6">
+    <button id="btn-home" class="bg-gray-600 px-6 py-2 text-xs rounded shadow-inner">HOME</button>
+    <button id="btn-back" class="bg-gray-600 px-6 py-2 text-xs rounded shadow-inner">BACK</button>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend text-center">
+    PHYSICAL: D-PAD = NAV • A = SELECT • HOME = DASHBOARD • BACK = PREVIOUS
   </div>
 
 </div>
-
-<!-- MACHINE PLATE FOOTER -->
-<div class="mt-6">
-  <div class="bg-zinc-700 border-2 border-zinc-900 px-6 py-3 text-[7px] text-zinc-300 tracking-widest shadow-inner text-center">
-    © 2026 GRH INDUSTRIES • ARCADE SYSTEM
-  </div>
-</div>
-
-<!-- SOUND -->
-<audio id="move-sound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" preload="auto"></audio>
-<audio id="select-sound" src="https://assets.mixkit.co/active_storage/sfx/2570/2570-preview.mp3" preload="auto"></audio>
 
 <script>
 let current = 0
 let currentMenu = "main"
-let idleTimer
-
-const screen = document.getElementById("screen")
-const moveSound = document.getElementById("move-sound")
-const selectSound = document.getElementById("select-sound")
 
 const links = {
   main: [
@@ -170,115 +163,87 @@ const links = {
   preset: [
     "https://drive.google.com/file/d/1Bs4M2H9lXtxrvRAWqawEz2U4akMIxt2h/view?usp=drivesdk",
     "https://drive.google.com/file/d/16ZZfGMMsoUrbT-xIWneySB3Jkom1Q8gk/view?usp=drivesdk",
-    "back"
   ]
 }
 
-function resetIdle(){
-  screen.classList.remove("dimmed")
-  clearTimeout(idleTimer)
-  idleTimer = setTimeout(()=>{
-    screen.classList.add("dimmed")
-  },30000)
-}
+function render(){
+  const content = document.getElementById("window-content")
+  const title = document.getElementById("window-title")
 
-function getItems(){
-  return document.querySelectorAll(
-    currentMenu === "main" ? "#main-menu .arcade-item" : "#preset-page .arcade-item"
-  )
-}
+  let items = []
 
-function update(){
-  const items = getItems()
-  items.forEach((el,i)=>{
-    el.classList.remove("text-white","selected")
-    el.classList.add("text-green-400")
-    if(i===current){
-      el.classList.remove("text-green-400")
-      el.classList.add("text-white","selected")
-    }
-  })
-}
+  if(currentMenu === "main"){
+    title.textContent = "My Computer"
+    items = ["LIGHTROOM PRESET","500PX","SAWERIA","GITHUB","DISCORD"]
+  }
 
-function pressVisual(id){
-  const btn = document.getElementById(id)
-  btn.classList.add("translate-y-1")
-  setTimeout(()=>btn.classList.remove("translate-y-1"),100)
+  if(currentMenu === "preset"){
+    title.textContent = "Lightroom Preset"
+    items = ["SUMMER GROWTH","WARM GROWTH"]
+  }
+
+  content.innerHTML = items.map((item,i)=>
+    `<div class="arcade-item ${i===current?'selected':''}">${item}</div>`
+  ).join("")
 }
 
 function moveUp(){
-  const items = getItems()
-  current = (current-1+items.length)%items.length
-  moveSound.currentTime=0
-  moveSound.play()
-  pressVisual("btn-up")
-  update()
-  resetIdle()
+  const max = currentMenu==="main"?5:2
+  current = (current-1+max)%max
+  render()
 }
 
 function moveDown(){
-  const items = getItems()
-  current = (current+1)%items.length
-  moveSound.currentTime=0
-  moveSound.play()
-  pressVisual("btn-down")
-  update()
-  resetIdle()
+  const max = currentMenu==="main"?5:2
+  current = (current+1)%max
+  render()
 }
 
-function showLoading(callback){
-  document.getElementById("loading").classList.remove("hidden")
-  document.getElementById("main-menu").classList.add("hidden")
-  document.getElementById("preset-page").classList.add("hidden")
-  setTimeout(()=>{
-    document.getElementById("loading").classList.add("hidden")
-    callback()
-  },600)
-}
+function moveLeft(){}
+function moveRight(){}
 
 function selectItem(){
-  selectSound.currentTime=0
-  selectSound.play()
-  pressVisual("btn-select")
-
-  const action = links[currentMenu][current]
-
-  if(action === "preset"){
-    showLoading(()=>{
-      document.getElementById("preset-page").classList.remove("hidden")
-      currentMenu = "preset"
-      current = 0
-      update()
-    })
-    return
+  if(currentMenu==="main"){
+    if(current===0){
+      currentMenu="preset"
+      current=0
+      render()
+      return
+    }
+    window.open(links.main[current],"_blank")
+  } else {
+    window.open(links.preset[current],"_blank")
   }
+}
 
-  if(action === "back"){
-    showLoading(()=>{
-      document.getElementById("main-menu").classList.remove("hidden")
-      currentMenu = "main"
-      current = 0
-      update()
-    })
-    return
+function goHome(){
+  currentMenu="main"
+  current=0
+  render()
+}
+
+function goBack(){
+  if(currentMenu==="preset"){
+    currentMenu="main"
+    current=0
+    render()
   }
-
-  window.open(action,"_blank")
-  resetIdle()
 }
 
 document.addEventListener("keydown",(e)=>{
-  if(e.key==="ArrowDown") moveDown()
   if(e.key==="ArrowUp") moveUp()
+  if(e.key==="ArrowDown") moveDown()
   if(e.key==="Enter") selectItem()
 })
 
-document.getElementById("btn-up").addEventListener("click", moveUp)
-document.getElementById("btn-down").addEventListener("click", moveDown)
-document.getElementById("btn-select").addEventListener("click", selectItem)
+document.getElementById("btn-up").onclick = moveUp
+document.getElementById("btn-down").onclick = moveDown
+document.getElementById("btn-a").onclick = selectItem
+document.getElementById("btn-home").onclick = goHome
+document.getElementById("btn-back").onclick = goBack
+document.getElementById("virtual-back").onclick = goBack
 
-resetIdle()
-update()
+render()
 </script>
 
 </body>
