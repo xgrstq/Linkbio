@@ -14,7 +14,6 @@ body{
   background:#2f2f2f;
 }
 
-/* ===== GAMEBOY BODY ===== */
 .gameboy{
   position:relative;
   background:linear-gradient(145deg,#d9d9c8,#c8c8b5);
@@ -24,7 +23,6 @@ body{
     0 10px 30px rgba(0,0,0,0.6);
 }
 
-/* ===== SCREEN ===== */
 .screen-shell{
   background:#8bac0f;
   padding:20px;
@@ -34,20 +32,11 @@ body{
 
 .screen-text{
   color:#0f380f;
-  font-size:12px;
+  font-size:10px;
   line-height:1.8;
   height:200px;
-  overflow-y:auto;
 }
 
-.screen-text::-webkit-scrollbar{
-  width:4px;
-}
-.screen-text::-webkit-scrollbar-thumb{
-  background:#0f380f;
-}
-
-/* ===== LOADING ANIMATION ===== */
 @keyframes blink{
   0%,100%{opacity:1}
   50%{opacity:0}
@@ -56,7 +45,6 @@ body{
   animation:blink 1s infinite;
 }
 
-/* ===== MENU ===== */
 .menu-item{
   position:relative;
   padding-left:14px;
@@ -68,7 +56,6 @@ body{
   left:0;
 }
 
-/* ===== D-PAD ===== */
 .dpad button{
   background:#3a3a3a;
   box-shadow: inset -3px -3px 6px rgba(0,0,0,0.7),
@@ -78,7 +65,6 @@ body{
   transform:translateY(2px);
 }
 
-/* ===== A B BUTTON ===== */
 .btn-round{
   width:60px;
   height:60px;
@@ -94,7 +80,6 @@ body{
   transform:translateY(3px);
 }
 
-/* ===== SMALL BUTTON ===== */
 .small-btn{
   background:#777;
   padding:6px 18px;
@@ -107,7 +92,6 @@ body{
   transform:translateY(2px);
 }
 
-/* ===== LED ===== */
 .led{
   width:10px;
   height:10px;
@@ -116,13 +100,30 @@ body{
   box-shadow:0 0 8px red;
 }
 
-/* ===== SPEAKER ===== */
 .speaker-line{
   height:4px;
   background:#777;
   margin:4px 0;
   border-radius:4px;
 }
+
+@keyframes cursorPop{
+  0%{transform:scale(0.6);opacity:0.6}
+  100%{transform:scale(1.2);opacity:1}
+}
+
+.menu-item.selected::before{
+  content:">";
+  position:absolute;
+  left:0;
+  display:inline-block;
+  animation:cursorPop 0.15s ease;
+}
+
+.menu-item::before{
+  transition:0.2s;
+}
+
 </style>
 </head>
 
@@ -130,29 +131,21 @@ body{
 
 <div class="gameboy w-[360px] rounded-2xl p-6">
 
- 
-  <!-- SCREEN -->
   <div class="screen-shell mb-6">
     <div class="screen-text" id="screen"></div>
   </div>
 
-<!-- LED + CREDIT -->
 <div class="flex items-center mb-4">
-  
-  <!-- KIRI: LED + POWER -->
   <div class="flex items-center gap-2">
     <div class="led"></div>
     <span class="text-xs text-gray-700">POWER</span>
   </div>
 
-  <!-- KANAN: CREDIT -->
   <div class="ml-auto text-[8px] text-gray-600 tracking-widest">
     © GRH 2026
   </div>
-
 </div>  
 
-  <!-- CONTROLS -->
   <div class="flex justify-between items-start">
 
     <div class="dpad grid grid-cols-3 gap-1 w-28">
@@ -183,8 +176,7 @@ body{
 
   </div>
 
-  <div class="flex justify-center gap-10 mt-6">
-    <button id="btn-select" class="small-btn">BACK</button>
+  <div class="flex justify-center mt-6">
     <button id="btn-start" class="small-btn">HOME</button>
   </div>
 
@@ -229,7 +221,7 @@ function render(){
     content += items.map((item,i)=>
       `<div class="menu-item ${i===current?'selected':''}">${item}</div>`
     ).join("")
-    content += "<br>A=SELECT"
+    content += "<br>A=SELECT<br>B=BACK"
   }
 
   if(currentMenu==="preset"){
@@ -239,7 +231,7 @@ function render(){
       content += `
       <div class="menu-item selected">SUMMER GROWTH</div>
       ORGANIC • WARM • VIBRANT<br><br>
-      DOWNLOAD
+      A=DOWNLOAD<br>B=BACK
       `
     }
 
@@ -247,7 +239,7 @@ function render(){
       content += `
       <div class="menu-item selected">WARM GROWTH</div>
       ORGANIC • WARM DAYLIGHT • PEACEFUL<br><br>
-      DOWNLOAD
+      A=DOWNLOAD<br>B=BACK
       `
     }
   }
@@ -316,7 +308,7 @@ document.addEventListener("keydown",(e)=>{
 document.getElementById("btn-up").onclick=moveUp
 document.getElementById("btn-down").onclick=moveDown
 document.getElementById("btn-a").onclick=selectItem
-document.getElementById("btn-select").onclick=goBack
+document.getElementById("btn-b").onclick=goBack
 document.getElementById("btn-start").onclick=goHome
 
 render()
